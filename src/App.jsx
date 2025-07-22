@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Chart from "react-apexcharts";
 
 function App() {
   const defaultInput = {
@@ -10,11 +11,26 @@ function App() {
 
   const [input, setInput] = useState(defaultInput);
   const [currencies, setCurrencies] = useState();
+  const [weekData, setWeekData] = useState();
 
   useEffect(() => {
     fetch(`https://api.frankfurter.dev/v1/currencies`)
       .then((res) => res.json())
       .then((data) => setCurrencies(data));
+
+    const currentDate = new Date().toISOString().slice(0, 10);
+
+    const lastWeekDate = new Date(
+      new Date().getTime() - 7 * 24 * 60 * 60 * 1000
+    )
+      .toISOString()
+      .slice(0, 10);
+
+    fetch(
+      `https://api.frankfurter.dev/v1/${lastWeekDate}..?amount=${input.amount}&from=${input.fromCurrency}&to=${input.toCurrency}`
+    )
+      .then((res) => res.json())
+      .then((data) => console.log(data));
   }, []);
 
   useEffect(() => {
@@ -34,6 +50,21 @@ function App() {
 
   const handleInputChange = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
+  };
+
+  var options = {
+    chart: {
+      id: "basic-bar",
+    },
+    series: [
+      {
+        name: "convertion",
+        data: [30, 40, 45, 50, 49, 60, 70, 91, 125],
+      },
+    ],
+    xaxis: {
+      categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
+    },
   };
 
   return (
@@ -105,6 +136,13 @@ function App() {
                 </select>
               </div>
             </form>
+            <div className="chart">
+              <Chart
+                options={options.chart}
+                series={options.series}
+                type="line"
+              />
+            </div>
           </div>
         </div>
       </div>
