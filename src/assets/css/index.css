@@ -49,6 +49,10 @@ body {
   padding: 10px;
 }
 
+.card-subtitle {
+  margin: 5px 0;
+}
+
 .form-control {
   display: flex;
   margin: 20px 0;
@@ -61,6 +65,7 @@ body {
   font-weight: 400;
   line-height: 1.5;
   background-color: rgb(186, 241, 186);
+  border: 0;
   border-radius: 5px;
 }
 

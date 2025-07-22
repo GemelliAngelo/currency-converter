@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 
 function App() {
   const defaultInput = {
-    amount: "1",
-    currencies: "",
+    amount: 1,
+    fromCurrency: "EUR",
+    toCurrency: "USD",
     convertedAmount: "",
-    convertedCurrencies: "",
   };
 
   const [input, setInput] = useState(defaultInput);
@@ -17,14 +17,20 @@ function App() {
       .then((data) => setCurrencies(data));
   }, []);
 
-  function convert(from, to, amount) {
-    fetch(`https://api.frankfurter.dev/v1/latest?base=${from}&symbols=${to}`)
-      .then((res) => res.json())
-      .then((data) => {
-        const convertedAmount = (amount * data.rates[to]).toFixed(2);
-        alert(`${amount} ${from} = ${convertedAmount} ${to}`);
-      });
-  }
+  useEffect(() => {
+    if (input.fromCurrency && input.toCurrency && input.amount) {
+      fetch(
+        `https://api.frankfurter.dev/v1/latest?amount=${input.amount}&from=${input.fromCurrency}&to=${input.toCurrency}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setInput((prev) => ({
+            ...prev,
+            convertedAmount: data.rates[input.toCurrency],
+          }));
+        });
+    }
+  }, [input.amount, input.fromCurrency, input.toCurrency]);
 
   const handleInputChange = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -38,6 +44,12 @@ function App() {
             <h1 className="card-title">CURRENCY BOOLVERTER</h1>
           </div>
           <div className="card-body">
+            <h5 className="card-subtitle">
+              {input.amount} {input.fromCurrency} è uguale a
+            </h5>
+            <h2 className="card-subtitle">
+              {input.convertedAmount} {input.toCurrency}
+            </h2>
             <form>
               <div className="form-control">
                 <input
@@ -46,13 +58,16 @@ function App() {
                   name="amount"
                   id="amount"
                   className="form form-input"
+                  value={input.amount}
                 />
                 <select
                   onChange={handleInputChange}
                   className="form form-select"
-                  name="currencies"
+                  name="fromCurrency"
                   id="currencies"
+                  value={input.fromCurrency}
                 >
+                  <option defaultValue="">Seleziona una valuta</option>
                   {currencies &&
                     Object.entries(currencies).map(([key, value]) => (
                       <option key={key} value={key}>
@@ -68,16 +83,18 @@ function App() {
                   name="convertedAmount"
                   id="convertedAmount"
                   className="form form-input"
+                  value={input.convertedAmount}
                 />
                 <select
                   onChange={handleInputChange}
                   className="form form-select"
-                  name="convertedCurrencies"
+                  name="toCurrency"
                   id="convertedCurrencies"
+                  value={input.toCurrency}
                 >
                   {currencies &&
                     Object.entries(currencies)
-                      .filter(([key, value]) => value !== input.currencies)
+                      .filter(([key, value]) => value !== input.fromCurrency)
                       .map(([key, value]) => (
                         <option key={key} value={key}>
                           {value}
