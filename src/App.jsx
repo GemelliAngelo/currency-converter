@@ -69,11 +69,13 @@ function App() {
                 >
                   <option defaultValue="">Seleziona una valuta</option>
                   {currencies &&
-                    Object.entries(currencies).map(([key, value]) => (
-                      <option key={key} value={key}>
-                        {value}
-                      </option>
-                    ))}
+                    Object.entries(currencies)
+                      .filter(([key, value]) => key !== input.toCurrency)
+                      .map(([key, value]) => (
+                        <option key={key} value={key}>
+                          {value}
+                        </option>
+                      ))}
                 </select>
               </div>
               <div className="form-control">
@@ -94,7 +96,7 @@ function App() {
                 >
                   {currencies &&
                     Object.entries(currencies)
-                      .filter(([key, value]) => value !== input.fromCurrency)
+                      .filter(([key, value]) => key !== input.fromCurrency)
                       .map(([key, value]) => (
                         <option key={key} value={key}>
                           {value}
