@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Chart from "react-apexcharts";
+import Graph from "./components/Graph";
 
 function App() {
   const defaultInput = {
@@ -11,44 +11,12 @@ function App() {
 
   const [input, setInput] = useState(defaultInput);
   const [currencies, setCurrencies] = useState();
-  const [weekData, setWeekData] = useState({
-    data: "",
-    categories: "",
-  });
 
   useEffect(() => {
     fetch(`https://api.frankfurter.dev/v1/currencies`)
       .then((res) => res.json())
       .then((data) => setCurrencies(data));
 
-    const lastWeekDate = new Date(
-      new Date().getTime() - 7 * 24 * 60 * 60 * 1000
-    )
-      .toISOString()
-      .slice(0, 10);
-
-    fetch(
-      `https://api.frankfurter.dev/v1/${lastWeekDate}..?amount=${input.amount}&from=${input.fromCurrency}&to=${input.toCurrency}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        const categories = Object.entries(data.rates)
-          .map((arr) => arr[0])
-          .map((date) => date);
-
-        const datas = Object.entries(data.rates).map(
-          (arr) => Object.values(arr[1])[0]
-        );
-
-        setWeekData({
-          ...weekData,
-          categories,
-          data: datas,
-        });
-      });
-  }, [input.fromCurrency, input.toCurrency]);
-
-  useEffect(() => {
     if (input.fromCurrency && input.toCurrency && input.amount) {
       fetch(
         `https://api.frankfurter.dev/v1/latest?amount=${input.amount}&from=${input.fromCurrency}&to=${input.toCurrency}`
@@ -65,97 +33,6 @@ function App() {
 
   const handleInputChange = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
-  };
-
-  const options = {
-    chart: {
-      id: "basic-bar",
-      background: "#000000",
-      foreColor: "#ffffffff",
-      animations: {
-        enabled: true,
-        speed: 800,
-        animateGradually: {
-          enabled: true,
-          delay: 150,
-        },
-        dynamicAnimation: {
-          enabled: true,
-          speed: 350,
-        },
-      },
-    },
-    grid: {
-      show: true,
-      borderColor: "#ffffff",
-      strokeDashArray: 5,
-      position: "back",
-      xaxis: {
-        lines: {
-          show: false,
-        },
-      },
-      yaxis: {
-        lines: {
-          show: true,
-        },
-      },
-      row: {
-        colors: undefined,
-        opacity: 0.5,
-      },
-      column: {
-        colors: ["#234556"],
-        opacity: 0.5,
-      },
-      padding: {
-        top: 10,
-        right: 10,
-        bottom: 10,
-        left: 10,
-      },
-    },
-    dataLabels: {
-      enabled: true,
-      enabledOnSeries: undefined,
-      textAnchor: "middle",
-      distributed: false,
-      offsetX: 0,
-      offsetY: 0,
-      style: {
-        fontSize: "12px",
-        fontFamily: "Helvetica, Arial, sans-serif",
-        fontWeight: "bold",
-        colors: ["#003d00"],
-      },
-      background: {
-        enabled: true,
-        foreColor: "#ffffff",
-        padding: 5,
-        borderRadius: 5,
-        borderWidth: 0,
-        borderColor: "#fff",
-        opacity: 1,
-        dropShadow: {
-          enabled: true,
-          top: 1,
-          left: 1,
-          blur: 1,
-          color: "#000000",
-          opacity: 1,
-        },
-      },
-    },
-    series: [
-      {
-        name: "convertion",
-        data: weekData.data,
-      },
-    ],
-    xaxis: {
-      type: "datetime",
-      categories: weekData.categories,
-    },
   };
 
   return (
@@ -226,9 +103,7 @@ function App() {
                 </select>
               </div>
             </form>
-            <div className="chart">
-              <Chart options={options} series={options.series} type="area" />
-            </div>
+            <Graph input={input} />
           </div>
         </div>
       </div>

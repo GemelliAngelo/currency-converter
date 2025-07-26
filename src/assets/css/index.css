@@ -10,8 +10,8 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background-color: rgb(68, 68, 68);
-  color: white;
+  background-color: #000000;
+  color: #ffffff;
 }
 
 .container {
@@ -31,7 +31,7 @@ body {
 }
 
 .card {
-  border: 3px solid rgb(0, 50, 0);
+  border: 3px solid #ffffff;
   border-radius: 10px;
   width: 800px;
   padding: 20px;
@@ -43,7 +43,7 @@ body {
 }
 
 .card-title {
-  color: rgb(0, 200, 0);
+  color: #ffffff;
 }
 
 .card-body {
@@ -61,23 +61,29 @@ form {
 .form-control {
   display: flex;
   margin: 20px 0;
+  gap: 1px;
 }
 
 .form {
   display: block;
   width: 100%;
+  padding: 6px;
+  color: #ffffff;
   font-size: 1rem;
-  font-weight: 400;
   line-height: 1.5;
-  background-color: rgb(186, 241, 186);
+  background-color: #535353;
   border: 0;
-  border-radius: 5px;
 }
 
-.form-input {
+.form.form-input {
+  border-radius: 5px 0 0 5px;
   padding: 0.375rem 0.75rem;
 }
 
-.form-select {
+.form.form-select {
+  appearance: none;
+  cursor: pointer;
   padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+  border-radius: 0 5px 5px 0;
+  text-align: center;
 }
