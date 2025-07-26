@@ -11,14 +11,15 @@ function App() {
 
   const [input, setInput] = useState(defaultInput);
   const [currencies, setCurrencies] = useState();
-  const [weekData, setWeekData] = useState();
+  const [weekData, setWeekData] = useState({
+    data: "",
+    categories: "",
+  });
 
   useEffect(() => {
     fetch(`https://api.frankfurter.dev/v1/currencies`)
       .then((res) => res.json())
       .then((data) => setCurrencies(data));
-
-    const currentDate = new Date().toISOString().slice(0, 10);
 
     const lastWeekDate = new Date(
       new Date().getTime() - 7 * 24 * 60 * 60 * 1000
@@ -30,8 +31,26 @@ function App() {
       `https://api.frankfurter.dev/v1/${lastWeekDate}..?amount=${input.amount}&from=${input.fromCurrency}&to=${input.toCurrency}`
     )
       .then((res) => res.json())
-      .then((data) => console.log(data));
-  }, []);
+      .then((data) => {
+        const categories = Object.entries(data.rates)
+          .map((arr) => arr[0])
+          .map((date) => new Date(date).getDate());
+
+        const datas = Object.entries(data.rates).map(
+          (arr) => Object.values(arr[1])[0]
+        );
+
+        setWeekData({
+          ...weekData,
+          categories,
+          data: datas,
+        });
+
+        console.log(categories);
+        console.log(datas);
+      });
+    console.log(weekData.categories);
+  }, [input.fromCurrency, input.toCurrency]);
 
   useEffect(() => {
     if (input.fromCurrency && input.toCurrency && input.amount) {
@@ -52,18 +71,20 @@ function App() {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
-  var options = {
+  const options = {
     chart: {
-      id: "basic-bar",
+      type: "area",
+      height: 300,
+      foreColor: "#999",
     },
     series: [
       {
         name: "convertion",
-        data: [30, 40, 45, 50, 49, 60, 70, 91, 125],
+        data: weekData.data,
       },
     ],
     xaxis: {
-      categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
+      categories: weekData.categories,
     },
   };
 
@@ -98,7 +119,6 @@ function App() {
                   id="currencies"
                   value={input.fromCurrency}
                 >
-                  <option defaultValue="">Seleziona una valuta</option>
                   {currencies &&
                     Object.entries(currencies)
                       .filter(([key, value]) => key !== input.toCurrency)
@@ -138,8 +158,10 @@ function App() {
             </form>
             <div className="chart">
               <Chart
+                className="light"
                 options={options.chart}
                 series={options.series}
+                x-axis={options.xaxis}
                 type="line"
               />
             </div>
