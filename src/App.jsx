@@ -34,7 +34,7 @@ function App() {
       .then((data) => {
         const categories = Object.entries(data.rates)
           .map((arr) => arr[0])
-          .map((date) => new Date(date).getDate());
+          .map((date) => date);
 
         const datas = Object.entries(data.rates).map(
           (arr) => Object.values(arr[1])[0]
@@ -45,11 +45,7 @@ function App() {
           categories,
           data: datas,
         });
-
-        console.log(categories);
-        console.log(datas);
       });
-    console.log(weekData.categories);
   }, [input.fromCurrency, input.toCurrency]);
 
   useEffect(() => {
@@ -73,9 +69,82 @@ function App() {
 
   const options = {
     chart: {
-      type: "area",
-      height: 300,
-      foreColor: "#999",
+      id: "basic-bar",
+      background: "#000000",
+      foreColor: "#ffffffff",
+      animations: {
+        enabled: true,
+        speed: 800,
+        animateGradually: {
+          enabled: true,
+          delay: 150,
+        },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 350,
+        },
+      },
+    },
+    grid: {
+      show: true,
+      borderColor: "#ffffff",
+      strokeDashArray: 5,
+      position: "back",
+      xaxis: {
+        lines: {
+          show: false,
+        },
+      },
+      yaxis: {
+        lines: {
+          show: true,
+        },
+      },
+      row: {
+        colors: undefined,
+        opacity: 0.5,
+      },
+      column: {
+        colors: ["#234556"],
+        opacity: 0.5,
+      },
+      padding: {
+        top: 10,
+        right: 10,
+        bottom: 10,
+        left: 10,
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      enabledOnSeries: undefined,
+      textAnchor: "middle",
+      distributed: false,
+      offsetX: 0,
+      offsetY: 0,
+      style: {
+        fontSize: "12px",
+        fontFamily: "Helvetica, Arial, sans-serif",
+        fontWeight: "bold",
+        colors: ["#003d00"],
+      },
+      background: {
+        enabled: true,
+        foreColor: "#ffffff",
+        padding: 5,
+        borderRadius: 5,
+        borderWidth: 0,
+        borderColor: "#fff",
+        opacity: 1,
+        dropShadow: {
+          enabled: true,
+          top: 1,
+          left: 1,
+          blur: 1,
+          color: "#000000",
+          opacity: 1,
+        },
+      },
     },
     series: [
       {
@@ -84,6 +153,7 @@ function App() {
       },
     ],
     xaxis: {
+      type: "datetime",
       categories: weekData.categories,
     },
   };
@@ -157,13 +227,7 @@ function App() {
               </div>
             </form>
             <div className="chart">
-              <Chart
-                className="light"
-                options={options.chart}
-                series={options.series}
-                x-axis={options.xaxis}
-                type="line"
-              />
+              <Chart options={options} series={options.series} type="area" />
             </div>
           </div>
         </div>
