@@ -3,6 +3,14 @@ export default function Form({ input, setInput, currencies }) {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
+  const handleSwitch = () => {
+    setInput({
+      ...input,
+      fromCurrency: input.toCurrency,
+      toCurrency: input.fromCurrency,
+    });
+  };
+
   return (
     <form>
       <div className="form-control">
@@ -30,6 +38,9 @@ export default function Form({ input, setInput, currencies }) {
                 </option>
               ))}
         </select>
+      </div>
+      <div className="switch">
+        <button id="switchCurrencies" onClick={handleSwitch} type="button" />
       </div>
       <div className="form-control">
         <input
